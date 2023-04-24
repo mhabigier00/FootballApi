@@ -16,7 +16,7 @@ namespace FootballApi.API
             _apiHost = apiHost;
         }
 
-        public async Task<HttpOperationResponse> GetData(List<string> queryParameters,string endpoint)
+        public async Task<HttpOperationResponse> GetData(List<string> queryParameters, List<int> queryIntParameters, string endpoint)
         {
             var baseUrl = _uri.AbsoluteUri+ endpoint;
             if(queryParameters.Count>0)
