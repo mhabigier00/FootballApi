@@ -21,6 +21,8 @@ namespace FootballApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
+            services.AddResponseCaching();
             var connectionString = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -63,7 +65,7 @@ namespace FootballApi
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
+            app.UseResponseCaching();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

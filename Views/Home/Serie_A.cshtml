@@ -1,5 +1,82 @@
-﻿@{
-    ViewData["Title"] = "Fixtures for the Italian League";
-}
-<h1>@ViewData["Title"]</h1>
+﻿        @model FootballApi.API.DataModels.Root
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <h1>@Model.Competition.Name</h1>
 
+        <img src="@Model.Competition.Emblem" alt="@Model.Competition.Name" class="logo"/>
+
+        <div class="expandable-list">
+          <div class="expandable-header">Matchday</div>
+          <div class="expandable-content">
+            <ul>
+              @for (int i = 1; i <= 38; i++)
+              {
+                    <li><a href="@Url.Action("Serie_A", "Home", new { matchday = i })">@i</a></li>
+              }
+            </ul>
+          </div>
+        </div>
+        <style>
+          .expandable-list {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            max-width: 100px;
+          }
+
+          .expandable-header {
+            font-weight: bold;
+            max-width: 100px;
+          }
+
+          .expandable-content {
+            display: none;
+            max-height: 100px;
+            max-width: 100px;
+            overflow-y: auto;
+          }
+          .match {
+              margin-bottom: 20px;
+          }
+        </style>
+        <style>
+            .team-logo {
+                width: 50px;
+                height: auto;
+            }
+            .logo {
+                margin-bottom: 10px;
+            }
+        </style>
+        <script>
+          $(document).ready(function() {
+            $('.expandable-header').click(function() {
+              $(this).siblings('.expandable-content').toggle();
+            });
+          });
+        </script>
+
+        <h2>Matches:</h2>
+
+        @foreach (var match in Model.Matches)
+        {
+            <div class="match">
+                @if (@match.Status == "FINISHED")
+                {
+                    <h3>@match.Score.FullTime.Home  <img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>     @match.HomeTeam.Name vs. @match.AwayTeam.Name     <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/>   @match.Score.FullTime.Away</h3>   
+                }
+                else
+                {
+                     <h3><img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>    @match.HomeTeam.Name vs. @match.AwayTeam.Name  <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/></h3>
+                }
+                @if(@match.Status =="FINISHED")
+                {
+                    <p>Status: @match.Status</p>
+                }
+                else
+                {
+                    <p>Status: Upcoming</p>
+                }
+                <button onclick="location.href='@Url.Action("Match", new { id = match.Id })'">Details</button>
+            </div>
+        }

@@ -1,27 +1,25 @@
 ﻿using Microsoft.Rest;
-using Newtonsoft.Json;
 
 namespace FootballApi.API
 {
     public class Client
     {
-        public System.Uri _uri;
+        public Uri _uri;
         private readonly string _apiKey;
-        private readonly string _apiHost;
 
-        public Client(System.Uri uri, string apiKey, string apiHost) 
+        public Client(string uri, string apiKey) 
         { 
-            _uri = uri;
+            _uri = new Uri(uri);
             _apiKey = apiKey;
-            _apiHost = apiHost;
         }
 
-        public async Task<HttpOperationResponse> GetData(List<string> queryParameters, List<int> queryIntParameters, string endpoint)
+        public async Task<HttpOperationResponse> GetData(Dictionary<string,string> queryParameters,string endpoint)
         {
-            var baseUrl = _uri.AbsoluteUri+ endpoint;
-            if(queryParameters.Count>0)
+            var baseUrl = _uri.AbsoluteUri +endpoint;
+
+            if (queryParameters.Count>0)
             {
-                baseUrl += "?" + string.Join("&",queryParameters);
+                baseUrl += "?" + string.Join("&", queryParameters.Select(x => $"{x.Key}={Uri.EscapeDataString(x.Value)}"));
             }
             var client = new HttpClient();
             var httpRequest = new HttpRequestMessage
@@ -30,8 +28,7 @@ namespace FootballApi.API
                 RequestUri = new Uri(baseUrl),
                 Headers =
                 {
-                    { "X-RapidAPI-Key", _apiKey },
-                    { "X-RapidAPI-Host",_apiHost }
+                    { "X-Auth-Token", _apiKey }
                 }
 
             };

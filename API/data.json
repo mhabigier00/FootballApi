@@ -1,5 +1,4 @@
 {
-  "Baseuri": "https://v3.football.api-sports.io/",
-  "Apikey": "",
-  "Host": "api-football-v1.p.rapidapi.com"
+  "Baseuri": "https://api.football-data.org/v4",
+  "ApiKey": "9059e4cb93de4662bffe09f3f205ea64"
 }

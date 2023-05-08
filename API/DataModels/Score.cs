@@ -4,12 +4,16 @@ namespace FootballApi.API.DataModels
 {
     public class Score
     {
-        [JsonConstructor] public Score(string home, string away) 
-        {
-            Home = home;
-            Away = away;
-        }
-        [JsonProperty("home")] public string Home { get; }
-        [JsonProperty("away")] public string Away { get; }
+        [JsonProperty("winner")]
+        public string? Winner { get; set; }
+
+        [JsonProperty("duration")]
+        public string? Duration { get; set; }
+
+        [JsonProperty("fullTime")]
+        public ScoreDetail? FullTime { get; set; }
+
+        [JsonProperty("halfTime")]
+        public ScoreDetail? HalfTime { get; set; }
     }
 }

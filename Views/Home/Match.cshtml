@@ -1,0 +1,103 @@
+﻿@model FootballApi.API.DataModels.Match
+
+<h1>@Model.Competition.Name</h1>
+
+<div class="match-details">
+    <div class="team-info">
+        <img src="@Model.HomeTeam.Crest" alt="@Model.HomeTeam.Name" class="team-logo" />
+        <h2>@Model.HomeTeam.Name</h2>
+    </div>
+    <div class="match-info">
+        <div class="scores">
+            @if (Model.Status == "FINISHED")
+            {
+                <span class="score score-finished">@Model.Score.FullTime.Home</span>
+                <span class="score-divider">-</span>
+                <span class="score score-finished">@Model.Score.FullTime.Away</span>
+            }
+        </div>
+        <p>Date: @Model.UtcDate</p>
+        <p>Matchday: @Model.Matchday</p>
+        @if (Model.Status == "FINISHED")
+        {
+            <p>Status: @Model.Status</p>
+            <p>Stadium: @Model.Venue</p>
+            <p>Half-Time: @Model.Score.HalfTime.Home - @Model.Score.HalfTime.Away</p>
+        }
+        else
+        {
+            <p>Status: Upcoming</p>
+            <p>Stadium: @Model.Venue</p>
+        }
+    </div>
+    <div class="team-info">
+        <img src="@Model.AwayTeam.Crest" alt="@Model.AwayTeam.Name" class="team-logo" />
+        <h2>@Model.AwayTeam.Name</h2>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .match-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-info {
+        text-align: center;
+    }
+
+    .team-logo {
+        width: 80px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .match-info {
+        flex-grow: 1;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    .scores {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .score {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0 10px;
+    }
+
+    .score-finished {
+        color: green;
+    }
+
+    .score-divider {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0 5px;
+    }
+
+    p {
+        margin: 5px 0;
+    }
+</style>
