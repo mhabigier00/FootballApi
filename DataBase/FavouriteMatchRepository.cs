@@ -31,6 +31,15 @@ namespace FootballApi.DataBase
                 .Select(fm => fm.MatchId)
                 .ToList();
         }
+        public void RemoveFavoriteMatch(Guid userId, int matchId)
+        {
+            var match = _context.FavouriteMatches.FirstOrDefault(c=> c.UserId == userId && c.MatchId == matchId);
+            if(match != null)
+            {
+                _context.FavouriteMatches.Remove(match);
+                _context.SaveChanges();
+            }
+        }
     }
 
 }

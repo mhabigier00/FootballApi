@@ -1,4 +1,11 @@
 ﻿        @model FootballApi.API.DataModels.Root
+
+        @if(@Model.Matches.Count == 0)
+{
+    <h1>You have no Favourite matches</h1>
+}
+else
+{
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <h1>Favourites</h1>
 
@@ -56,6 +63,31 @@
                 {
                     <p>Status: Upcoming</p>
                 }
-                <button onclick="location.href='@Url.Action("Match", new { id = match.Id })'">Details</button>
+                <button onclick="location.href='@Url.Action("FavouriteMatch", new { id = match.Id })'">Details</button>
+                <p></p>
+                <button id="removeButton-@match.Id" class="remove">Remove</button>
             </div>
+
+            <script>
+                $(document).ready(function(){
+                    $('#removeButton-@match.Id').click(function(){
+                        $.ajax({
+                            url:'/Home/DeleteMatch',
+                            type: 'POST',
+                            data: {matchId: @match.Id},
+                            success: function(){
+                                alert('Match removed!');
+                                location.reload();
+                            },
+                            error: function(){
+                                alert('Failed to remove match!')
+                            }
+                        });
+                    });
+                });
+            </script>
         }
+
+
+
+}

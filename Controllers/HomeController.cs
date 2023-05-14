@@ -132,14 +132,30 @@ namespace FootballApi.Controllers
             _cache.Set(cacheKey, page, TimeSpan.FromMinutes(5));
             return View(page);
         }
+        public async Task<IActionResult> FavouriteMatch(int id = 0)
+        {
+            var cacheKey = $"Match{id}";
+            if (_cache.TryGetValue(cacheKey, out Match data))
+            {
+                return View(data);
+            }
+            var client = new Client("https://api.football-data.org/v4", "9059e4cb93de4662bffe09f3f205ea64");
+            var response = await client.GetData(new Dictionary<string, string>(), $"/matches/{id}");
+            var jsonString = await response.Response.Content.ReadAsStringAsync();
+            var page = JsonConvert.DeserializeObject<Match>(jsonString);
+            _cache.Set(cacheKey, page, TimeSpan.FromMinutes(5));
+            return View(page);
+        }
         public async Task AddMatch(int matchId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(User.Identity.IsAuthenticated)
+            var cacheKey = $"Favourites{userId}";
+            if (User.Identity.IsAuthenticated)
             {
                 if (Guid.TryParse(userId, out Guid parsedUserId))
                 {
                     _favouriteMatchRepository.AddFavoriteMatch(parsedUserId, matchId);
+                    _cache.Remove(cacheKey);
                 }
                 else
                 {
@@ -152,23 +168,48 @@ namespace FootballApi.Controllers
             }
     
         }
+        public async Task DeleteMatch(int matchId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cacheKey = $"Favourites{userId}";
+            if (User.Identity.IsAuthenticated)
+            {
+                if(Guid.TryParse(userId,out Guid parsedUserId))
+                {
+                    _favouriteMatchRepository.RemoveFavoriteMatch(parsedUserId, matchId);
+                    _cache.Remove(cacheKey);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            else { throw new InvalidDataException(); }
+        }
         public async Task<IActionResult> Favourites()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cacheKey = $"Favourites{userId}";
             if (User.Identity.IsAuthenticated)
             {
                 if (Guid.TryParse(userId, out Guid parsedUserId))
                 {
                     var matches = _favouriteMatchRepository.GetMatchIdsByUserId(parsedUserId);
-                    if(matches == null)
+                    if(matches.Count == 0)
                     {
-                        return View(Empty);
+                        var empty = new Root
+                        {
+                            Matches = new List<Match>()
+                        };
+                        _cache.Set(cacheKey, empty);
+                        return View(empty);
                     }
                     var matchString = string.Join(",", matches);
                     var client = new Client("https://api.football-data.org/v4", "9059e4cb93de4662bffe09f3f205ea64");
                     var response = await client.GetData(new Dictionary<string, string> { { "ids", $"{matchString}" } }, "/matches");
                     var jsonString = await response.Response.Content.ReadAsStringAsync();
                     var page = JsonConvert.DeserializeObject<Root>(jsonString);
+                    _cache.Set(cacheKey, page);
                     return View(page);
                 }
                 else

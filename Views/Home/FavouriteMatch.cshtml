@@ -34,36 +34,6 @@
         <h2>@Model.AwayTeam.Name</h2>
     </div>
 </div>
-@if(User.Identity.IsAuthenticated)
-{
-    <button id="addToFavoriteButton" class="add-to-favorite">Add to favorite</button>
-}
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    $(document).ready(function() {
-        $('#addToFavoriteButton').click(function() {
-                $.ajax({
-                    url: '/Home/AddMatch',
-                    type: 'POST',
-                    data: { matchId: @Model.Id }, 
-                    success: function() {
-                        alert('Match added to favorites!');
-                    $('#addToFavoriteButton').css('background-color', 'gray');
-                    $('#addToFavoriteButton').prop('disabled', true);
-                    },
-                    error: function() {
-                        alert('Failed to add match to favorites.');
-                    }
-                });
-        });
-    });
-</script>
-
-
-
 <style>
     body {
         font-family: Arial, sans-serif;
