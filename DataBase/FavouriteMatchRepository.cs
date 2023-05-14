@@ -12,7 +12,7 @@ namespace FootballApi.DataBase
             _context = context;
         }
 
-        public void AddFavoriteMatch(int userId, int matchId)
+        public void AddFavoriteMatch(Guid userId, int matchId)
         {
             var favoriteMatch = new FavouriteMatch
             {
@@ -24,7 +24,7 @@ namespace FootballApi.DataBase
             _context.SaveChanges();
         }
 
-        public List<int> GetMatchIdsByUserId(int userId)
+        public List<int> GetMatchIdsByUserId(Guid userId)
         {
             return _context.FavouriteMatches
                 .Where(fm => fm.UserId == userId)

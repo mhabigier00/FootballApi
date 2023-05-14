@@ -135,15 +135,52 @@ namespace FootballApi.Controllers
         public async Task AddMatch(int matchId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(int.TryParse(userId, out int parsedUserId))
+            if(User.Identity.IsAuthenticated)
             {
-                _favouriteMatchRepository.AddFavoriteMatch(parsedUserId, matchId);
-
+                if (Guid.TryParse(userId, out Guid parsedUserId))
+                {
+                    _favouriteMatchRepository.AddFavoriteMatch(parsedUserId, matchId);
+                }
+                else
+                {
+                    throw new InvalidCastException("Invalid Data");
+                }
             }
             else
             {
-                throw new Exception();
-            }     
+                throw new InvalidDataException("Invalid User");
+            }
+    
+        }
+        public async Task<IActionResult> Favourites()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (User.Identity.IsAuthenticated)
+            {
+                if (Guid.TryParse(userId, out Guid parsedUserId))
+                {
+                    var matches = _favouriteMatchRepository.GetMatchIdsByUserId(parsedUserId);
+                    if(matches == null)
+                    {
+                        return View(Empty);
+                    }
+                    var matchString = string.Join(",", matches);
+                    var client = new Client("https://api.football-data.org/v4", "9059e4cb93de4662bffe09f3f205ea64");
+                    var response = await client.GetData(new Dictionary<string, string> { { "ids", $"{matchString}" } }, "/matches");
+                    var jsonString = await response.Response.Content.ReadAsStringAsync();
+                    var page = JsonConvert.DeserializeObject<Root>(jsonString);
+                    return View(page);
+                }
+                else
+                {
+                    throw new InvalidCastException("Invalid Data");
+                }
+            }
+            else
+            {
+                throw new InvalidDataException("Invalid User");
+            }
+
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

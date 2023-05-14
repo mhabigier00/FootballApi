@@ -1,7 +1,6 @@
 ﻿@model FootballApi.API.DataModels.Match
 
 <h1>@Model.Competition.Name</h1>
-
 <div class="match-details">
     <div class="team-info">
         <img src="@Model.HomeTeam.Crest" alt="@Model.HomeTeam.Name" class="team-logo" />
@@ -35,7 +34,35 @@
         <h2>@Model.AwayTeam.Name</h2>
     </div>
 </div>
-<button class="add-to-favorite">Add to favorite</button>
+@if(User.Identity.IsAuthenticated)
+{
+    <button id="addToFavoriteButton" class="add-to-favorite">Add to favorite</button>
+}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#addToFavoriteButton').click(function() {
+                $.ajax({
+                    url: '/Home/AddMatch', // Replace with the appropriate URL for your application
+                    type: 'POST',
+                    data: { matchId: 123 }, // Replace 123 with the actual match ID
+                    success: function() {
+                        // Handle success, such as displaying a success message
+                        alert('Match added to favorites!');
+                    },
+                    error: function() {
+                        // Handle error, such as displaying an error message
+                        alert('Failed to add match to favorites.');
+                    }
+                });
+        });
+    });
+</script>
+
+
 
 <style>
     body {
