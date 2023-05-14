@@ -1,10 +1,13 @@
 ﻿using FootballApi.API;
 using FootballApi.API.DataModels;
 using FootballApi.Models;
+using FootballApi.DataBase;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace FootballApi.Controllers
 {
@@ -12,10 +15,14 @@ namespace FootballApi.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IMemoryCache _cache;
-        public HomeController(ILogger<HomeController> logger, IMemoryCache cache)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly FavouriteMatchRepository _favouriteMatchRepository;
+        public HomeController(ILogger<HomeController> logger, IMemoryCache cache, UserManager<IdentityUser> userManager, FavouriteMatchRepository favouriteMatchRepository)
         {
             _logger = logger;
             _cache = cache;
+            _userManager = userManager;
+            _favouriteMatchRepository = favouriteMatchRepository;
         }
 
         public IActionResult Index()
@@ -125,7 +132,19 @@ namespace FootballApi.Controllers
             _cache.Set(cacheKey, page, TimeSpan.FromMinutes(5));
             return View(page);
         }
+        public async Task AddMatch(int matchId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(int.TryParse(userId, out int parsedUserId))
+            {
+                _favouriteMatchRepository.AddFavoriteMatch(parsedUserId, matchId);
 
+            }
+            else
+            {
+                throw new Exception();
+            }     
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

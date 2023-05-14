@@ -1,5 +1,6 @@
 ﻿        @model FootballApi.API.DataModels.Root
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://kit.fontawesome.com/f095ea66a8.js" crossorigin="anonymous"></script>
         <h1>@Model.Competition.Name</h1>
 
         <img src="@Model.Competition.Emblem" alt="@Model.Competition.Name" class="logo"/>
@@ -28,7 +29,6 @@
             font-weight: bold;
             max-width: 100px;
           }
-
           .expandable-content {
             display: none;
             max-height: 100px;
@@ -63,7 +63,12 @@
             <div class="match">
                 @if (@match.Status == "FINISHED")
                 {
-                    <h3>@match.Score.FullTime.Home  <img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>     @match.HomeTeam.Name vs. @match.AwayTeam.Name     <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/>   @match.Score.FullTime.Away</h3>   
+                    <h3>@match.Score.FullTime.Home  
+                        <img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>     
+                        @match.HomeTeam.Name vs. @match.AwayTeam.Name     
+                        <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/>   
+                        @match.Score.FullTime.Away
+                    </h3>
                 }
                 else
                 {
