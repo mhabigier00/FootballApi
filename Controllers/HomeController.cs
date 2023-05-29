@@ -2,6 +2,7 @@
 using FootballApi.API.DataModels;
 using FootballApi.Models;
 using FootballApi.DataBase;
+using FootballApi.DataBase.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -134,15 +135,18 @@ namespace FootballApi.Controllers
         }
         public async Task<IActionResult> FavouriteMatch(int id = 0)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var cacheKey = $"Match{id}";
-            if (_cache.TryGetValue(cacheKey, out Match data))
+            if (_cache.TryGetValue(cacheKey, out DBMatch data))
             {
                 return View(data);
             }
             var client = new Client("https://api.football-data.org/v4", "9059e4cb93de4662bffe09f3f205ea64");
             var response = await client.GetData(new Dictionary<string, string>(), $"/matches/{id}");
             var jsonString = await response.Response.Content.ReadAsStringAsync();
-            var page = JsonConvert.DeserializeObject<Match>(jsonString);
+            var page = JsonConvert.DeserializeObject<DBMatch>(jsonString);
+            var description = _favouriteMatchRepository.GetDescription(Guid.Parse(userId), page.Id);
+            page.Description = description;
             _cache.Set(cacheKey, page, TimeSpan.FromMinutes(5));
             return View(page);
         }
@@ -168,10 +172,32 @@ namespace FootballApi.Controllers
             }
     
         }
+        public async Task AddDescription(int matchId, string description)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cacheKey = $"Description{userId},{matchId}";
+            if (User.Identity.IsAuthenticated)
+            {
+                if (Guid.TryParse(userId, out Guid parsedUserId))
+                {
+                    _favouriteMatchRepository.AddDescriptionToMatch(parsedUserId, matchId, description);
+                    _cache.Remove(cacheKey);
+                }
+                else
+                {
+                    throw new InvalidCastException("Invalid Data");
+                }
+            }
+            else
+            {
+                throw new InvalidDataException("Invalid User");
+            }
+        }
+
         public async Task DeleteMatch(int matchId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cacheKey = $"Favourites{userId}";
+            var cacheKey = $"Favourites{userId},{matchId}";
             if (User.Identity.IsAuthenticated)
             {
                 if(Guid.TryParse(userId,out Guid parsedUserId))

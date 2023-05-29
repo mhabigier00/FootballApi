@@ -1,4 +1,4 @@
-﻿@model FootballApi.API.DataModels.Match
+﻿@model FootballApi.DataBase.Models.DBMatch
 
 <h1>@Model.Competition.Name</h1>
 <div class="match-details">
@@ -34,6 +34,32 @@
         <h2>@Model.AwayTeam.Name</h2>
     </div>
 </div>
+    <div class="description">
+@*    <textarea id="descriptionInput" placeholder= "@(Model.Description ?? "Enter description here...")" rows="4" cols="50"></textarea>*@
+    <textarea id="descriptionInput" rows="4" cols="50" style="resize: both; width: 100%;">@Model.Description</textarea>
+    </div>
+    <button id="saveDescriptionButton" class="save-description">Save Description</button>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('#saveDescriptionButton').click(function(){
+            var description = $('#descriptionInput').val();
+            $.ajax({
+                url:'/Home/AddDescription',
+                type: 'POST',
+                data: { matchId: @Model.Id, description: description},
+                success: function(){
+                    alert('Description saved!');
+                },
+                error: function(){
+                    alert('Failed to save description!')
+                }
+            });
+        });
+    });
+</script>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -47,6 +73,7 @@
     }
 
     .match-details {
+        margin-bottom: 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;

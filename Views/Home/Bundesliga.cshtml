@@ -35,9 +35,28 @@
             max-width: 100px;
             overflow-y: auto;
           }
-          .match {
-              margin-bottom: 20px;
-          }
+            .match {
+                margin-bottom: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: flex-start;
+                background-color: #fff;
+                border-radius: 5px;
+                padding: 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .match-header {
+                margin-bottom: 10px;
+            }
+
+            .match-footer {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
         </style>
         <style>
             .team-logo {
@@ -63,20 +82,20 @@
             <div class="match">
                 @if (@match.Status == "FINISHED")
                 {
-                    <h3>@match.Score.FullTime.Home  <img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>     @match.HomeTeam.Name vs. @match.AwayTeam.Name     <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/>   @match.Score.FullTime.Away</h3>   
+                    <div class="match-header">
+                        <h3>@match.Score.FullTime.Home  <img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>     @match.HomeTeam.Name vs. @match.AwayTeam.Name     <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/>   @match.Score.FullTime.Away</h3>   
+                        <p>Status: @match.Status</p>
+                    </div>
                 }
                 else
                 {
-                     <h3><img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>    @match.HomeTeam.Name vs. @match.AwayTeam.Name  <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/></h3>
+                    <div class="match-header">
+                        <h3><img src="@match.HomeTeam.Crest" alt="@match.HomeTeam.Name" class="team-logo"/>    @match.HomeTeam.Name vs. @match.AwayTeam.Name  <img src="@match.AwayTeam.Crest" alt="@match.AwayTeam.Name" class="team-logo"/></h3>
+                        <p>Status: Upcoming</p>
+                    </div>
                 }
-                @if(@match.Status =="FINISHED")
-                {
-                    <p>Status: @match.Status</p>
-                }
-                else
-                {
-                    <p>Status: Upcoming</p>
-                }
-                <button onclick="location.href='@Url.Action("Match", new { id = match.Id })'">Details</button>
+                <div class="match-footer">
+                    <button onclick="location.href='@Url.Action("Match", new { id = match.Id })'">Details</button>
+                </div>
             </div>
         }

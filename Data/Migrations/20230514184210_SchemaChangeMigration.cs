@@ -15,8 +15,6 @@ namespace FootballApi.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "FavouriteMatches");
             migrationBuilder.CreateTable(
                 name: "FavouriteMatches",
                 columns: table => new
@@ -24,7 +22,8 @@ namespace FootballApi.Data.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<Guid>(nullable: false),
-                    MatchId = table.Column<int>(nullable: false)
+                    MatchId = table.Column<int>(nullable: false),
+                    MatchDescription = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {

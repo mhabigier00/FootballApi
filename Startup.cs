@@ -24,7 +24,7 @@ namespace FootballApi
         {
             services.AddMemoryCache();
             services.AddResponseCaching();
-            var connectionString = Configuration.GetConnectionString("AzureConnection");
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             services.AddDatabaseDeveloperPageExceptionFilter();
